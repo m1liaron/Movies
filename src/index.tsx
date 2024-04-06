@@ -4,8 +4,8 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
-import {About} from "./features/About";
-import Movies from "./features/Movies";
+import {About} from "./features/About/About";
+import Movies from "./features/Movies/Movies";
 import {Provider} from "react-redux";
 import store from "./store";
 
