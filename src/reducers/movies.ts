@@ -1,25 +1,72 @@
 import {Action, Reducer} from "redux";
+import {ActionWidthPayload, createReducer} from "../redux/utils";
+import {AppThunk} from "../store";
+import {client} from "../api/tmdb";
 
 export interface Movie {
     id: number;
     title: string;
     popularity: number;
-    overview: string
+    overview: string;
+    image?: string;
 }
 
 interface MovieState {
-    top: Movie[]
+    top: Movie[];
+    loading: boolean;
 }
 
 const initialState: MovieState = {
-    top:[
-        {id: 1, title:'Spider Man', popularity: 98, overview: "Dreams..."},
-        {id: 2, title:'Hello Man2', popularity: 58, overview: "Dreams2..."},
-        {id: 3, title:'Fly Man3', popularity: 68, overview: "Dreams3..."}
-    ]
-}
-const moviesReducer: Reducer<MovieState, Action> = (state, action) => {
-    return initialState;
+    top:[],
+    loading: false
 }
 
+const moviesLoaded = (movies: Movie[]) => ({
+    type: "movies/loaded",
+    payload: movies,
+})
+
+const moviesLoading = () => ({
+    type: "movies/loading"
+})
+
+export function fetchMovies(): AppThunk<Promise<void>> {
+    return async (dispatch, getState)  => {
+        dispatch(moviesLoading());
+
+
+        const configuration = await client.getConfiguration();
+        const imageUrl = configuration.images.base_url;
+        const results = await client.getNowPlaying();
+
+        const mappedResults: Movie[] = results.map((m) => ({
+            id: m.id,
+            title: m.title,
+            overview: m.overview,
+            popularity: m.popularity,
+            image: m.backdrop_path ? `${imageUrl}w780${m.backdrop_path}` : undefined
+        }))
+
+        dispatch(moviesLoaded(mappedResults))
+    }
+}
+
+const moviesReducer = createReducer<MovieState>(
+    initialState,
+    {
+        "movies/loaded": (state, action: ActionWidthPayload<Movie[]>) => {
+            return {
+                ...state,
+                top: action.payload,
+                loading: false
+            };
+        },
+        "movies/loading": (state, action) => {
+            return {
+                ...state,
+                loading:true
+            }
+        }
+    }
+)
 export default moviesReducer;
