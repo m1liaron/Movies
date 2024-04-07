@@ -42,7 +42,7 @@ export const client = {
         return get<Configuration>("/configuration")
     },
     async getNowPlaying(): Promise <MovieDetails[]> {
-       const response =  await get<PageResponse<MovieDetails>>('/movie/now_playing?language=uk-US&page=1');
+       const response =  await get<PageResponse<MovieDetails>>('/movie/now_playing?language=en-US&page=1');
         return response.results
     }
 

@@ -1,4 +1,3 @@
-import {Action, Reducer} from "redux";
 import {ActionWidthPayload, createReducer} from "../redux/utils";
 import {AppThunk} from "../store";
 import {client} from "../api/tmdb";
@@ -51,7 +50,7 @@ export function fetchMovies(): AppThunk<Promise<void>> {
     }
 }
 
-const moviesReducer = createReducer<MovieState>(
+export const moviesReducer = createReducer<MovieState>(
     initialState,
     {
         "movies/loaded": (state, action: ActionWidthPayload<Movie[]>) => {
@@ -69,4 +68,3 @@ const moviesReducer = createReducer<MovieState>(
         }
     }
 )
-export default moviesReducer;

@@ -13,11 +13,15 @@ import Movies from "./features/Movies/Movies";
 import {Home} from "./features/Home/Home";
 import {Provider} from "react-redux";
 import store from "./store";
+import {Movie} from "./features/Movie/Movie";
+import {ErrorBoundary} from "./ErrorBoundary";
 
 function AppEntryPoint(){
     return (
         <Provider store={store}>
-            <App/>
+            <ErrorBoundary>
+                <App/>
+            </ErrorBoundary>
         </Provider>
     )
 }
@@ -37,8 +41,14 @@ const router = createBrowserRouter([
             },
             {
                 path:'movies',
-                element: <Movies/>
-            },
+                element: <Movies/>,
+                children:[
+                    {
+                        path:':id',
+                        element:<Movie/>
+                    }
+                ]
+            }
         ]
     }
 ]);
