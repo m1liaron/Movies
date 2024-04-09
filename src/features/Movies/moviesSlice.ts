@@ -1,6 +1,6 @@
 import {ActionWidthPayload, createReducer} from "../../redux/utils";
 import {AppThunk} from "../../store";
-import {client} from "../../api/tmdb";
+import {client, MoviesFilters} from "../../api/tmdb";
 
 export interface Movie {
     id: number;
@@ -10,18 +10,38 @@ export interface Movie {
     image?: string;
 }
 
+export interface Genre {
+    id: number,
+    name: string
+}
+
 interface MovieState {
-    top: Movie[];
     loading: boolean;
+    top: Movie[];
     page: number;
-    hasMorePages: boolean
+    hasMorePages: boolean;
+    genres: Genre[];
 }
 
 const initialState: MovieState = {
     top:[],
     loading: false,
     page: 0,
-    hasMorePages: true
+    hasMorePages: true,
+    genres: [
+        {
+            id: 28,
+            name:'Action'
+        },
+        {
+            id: 12,
+            name:'Adventure'
+        },
+        {
+            id: 16,
+            name:'Animation'
+        },
+    ]
 }
 
 const moviesLoaded = (movies: Movie[], page: number, hasMorePages: boolean) => ({
@@ -33,22 +53,26 @@ const moviesLoading = () => ({
     type: "movies/loading"
 })
 
-export function fetchNextPage(): AppThunk<Promise<void>> {
+export const resetMovies = () => ({
+    type: "movies/reset"
+});
+
+export function fetchNextPage(filters: MoviesFilters = {}): AppThunk<Promise<void>> {
         return async (dispatch, getState)  => {
             const nextPage = getState().movies.page + 1
-            dispatch(fetchPage(nextPage))
+            dispatch(fetchPage(nextPage, filters))
     }
 }
 
-function fetchPage(page: number): AppThunk<Promise<void>>{
+function fetchPage(page: number, filters: MoviesFilters): AppThunk<Promise<void>>{
     return async (dispatch) => {
         dispatch(moviesLoading());
 
         const configuration = await client.getConfiguration();
         const imageUrl = configuration.images.base_url;
-        const nowPlaying = await client.getNowPlaying(page);
+        const moviesResponse = await client.getMovies(page, filters);
 
-        const mappedResults: Movie[] = nowPlaying.results.map((m) => ({
+        const mappedResults: Movie[] = moviesResponse.results.map((m) => ({
             id: m.id,
             title: m.title,
             overview: m.overview,
@@ -56,7 +80,7 @@ function fetchPage(page: number): AppThunk<Promise<void>>{
             image: m.backdrop_path ? `${imageUrl}w780${m.backdrop_path}` : undefined
         }))
 
-        const hasMorePages = nowPlaying.page < nowPlaying.totalPages;
+        const hasMorePages = moviesResponse.page < moviesResponse.totalPages;
 
         dispatch(moviesLoaded(mappedResults, page, hasMorePages))
     }
@@ -78,7 +102,9 @@ export const moviesReducer = createReducer<MovieState>(
             return {
                 ...state,
                 loading:true
-            }
+            };
+        },
+        "movies/reset" : () => {
+            return {...initialState}
         }
-    }
-)
+    });
