@@ -9,7 +9,7 @@ export function Home() {
     ? `${user.name} Explore movies today with us!`
     : 'Explore movies today with us!'
 
-    throw new Error('Fatality!')
+    // throw new Error('Fatality!') check Error Boundary work
 
     return (
         <Box sx={{pt: 8, pb:8}}>
