@@ -1,14 +1,15 @@
-import {useCallback, useContext, useEffect, useState} from "react";
+import {lazy, Suspense, useCallback, useContext, useEffect, useState} from "react";
 import {fetchNextPage, resetMovies} from "./moviesSlice";
 import MovieCard from "./MovieCard";
 import {useAppDispatch, useAppSelector} from "../../hooks";
 import {Container, Grid, LinearProgress, Typography} from "@mui/material";
 import {anonymousUser, AuthContext} from "../../AuthContext";
 import {useIntersectionObserver} from "../../hooks/useIntersectionObserver";
-import {MoviesFilter, Filters} from "./MoviesFilter";
 
-function Movies(){
-    const [filters, setFilters] = useState<Filters>();
+const MoviesFilter = lazy(() => import('./MoviesFilter'));
+
+export default function Movies(){
+    const [filters, setFilters] = useState<any>();
     const dispatch = useAppDispatch()
     const movies = useAppSelector((state) => state.movies.top)
     const loading = useAppSelector((state) => state.movies.loading)
@@ -26,7 +27,7 @@ function Movies(){
         if(entry?.isIntersecting && hasMorePages){
             const moviesFilters = filters
                 ? {
-                 keywords: filters.keywords.map(k => k.id),
+                 keywords: filters.keywords.map((k: any) => k.id),
                  genres: filters?.genres,
                 }
                 : undefined
@@ -42,10 +43,12 @@ function Movies(){
     return(
         <Grid container spacing={2} sx={{flexWrap:"nowrap"}}>
             <Grid item xs="auto">
-                <MoviesFilter onApply={(f) => {
-                    dispatch(resetMovies())
-                    setFilters(f)
-                }}/>
+                <Suspense fallback={<span>Loading filters...</span>}>
+                    <MoviesFilter onApply={(f) => {
+                        dispatch(resetMovies())
+                        setFilters(f)
+                    }}/>
+                </Suspense>
             </Grid>
             <Grid item xs={12}>
         <Container sx={{py: 8}} maxWidth='lg'>
@@ -73,5 +76,3 @@ function Movies(){
         </Grid>
     )
 }
-
-export default Movies;
