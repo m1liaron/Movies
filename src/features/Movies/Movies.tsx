@@ -9,6 +9,7 @@ import{
     useGetConfigurationQuery,
     useGetMoviesQuery
 } from '../../services/tmdb'
+import {useAuth0} from "@auth0/auth0-react";
 
 const MoviesFilter = lazy(() => import('./MoviesFilter'));
 
@@ -30,8 +31,7 @@ export default function Movies(){
         return path && configuration ? `${configuration?.images.base_url}w780${path}` : undefined
     }
 
-    const { user} = useContext(AuthContext)
-    const loggedIn = user !== anonymousUser
+    const {user, isAuthenticated} = useAuth0()
 
     const onIntersect = useCallback(() => {
         if(hasMorePages) {
@@ -42,8 +42,8 @@ export default function Movies(){
     const [targetRef] = useIntersectionObserver({ onIntersect });
 
     const handleAddFavorite = useCallback((id: number) => {
-        alert(`Not implemented! Action: ${user.name} is adding movie ${id} to favorites.`)
-    }, [user.name])
+        alert(`Not implemented! Action: ${user?.name} is adding movie ${id} to favorites.`)
+    }, [user?.name])
 
     return(
         <Grid container spacing={2} sx={{flexWrap:"nowrap"}}>
@@ -78,7 +78,7 @@ export default function Movies(){
                             overview={m.overview}
                             popularity={m.popularity}
                             image={formatImageUrl(m.backdrop_path)}
-                            enableUserActions={loggedIn}
+                            enableUserActions={isAuthenticated}
                             onAddFavorite={handleAddFavorite}
                         />
                     </Grid>

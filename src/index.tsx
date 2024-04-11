@@ -16,16 +16,23 @@ import {Movie} from "./features/Movie/Movie";
 import {ErrorBoundary} from "./ErrorBoundary";
 import {LinearProgress} from "@mui/material";
 import {Extra} from "./features/Extra/Extra";
+import {StatefulAuthProvider} from "./auth/StatefulAuthProvider";
+import {AuthCallback} from "./auth/AuthCallback";
+import {Profile} from "./features/Profile/Profile";
+import {AuthenticationGuard} from "./auth/AuthenticationGuard";
+import {Protected} from "./features/Protected/Protected";
 
 const Movies = lazy(() => import("./features/Movies/Movies"));
 
 function AppEntryPoint(){
     return (
-        <Provider store={store}>
-            <ErrorBoundary>
-                <App/>
-            </ErrorBoundary>
-        </Provider>
+        <StatefulAuthProvider>
+            <Provider store={store}>
+                <ErrorBoundary>
+                    <App/>
+                </ErrorBoundary>
+            </Provider>
+        </StatefulAuthProvider>
     )
 }
 
@@ -39,25 +46,37 @@ const router = createBrowserRouter([
                 element: <Home/>
             },
             {
-                path:'about',
-                element: <About/>
-            },
-            {
                 path:'movies',
                 element:
                     <Suspense fallback={<LinearProgress sx={{mt: 1}}/>}>
                         <Movies/>
                     </Suspense>,
-                children:[
-                    {
-                        path:':id',
-                        element:<Movie/>
-                    }
-                ]
+                // children:[
+                //     {
+                //         path:':id',
+                //         element:<Movie/>
+                //     }
+                // ]
             },
             {
                 path: "extra",
                 element: <Extra/>
+            },
+            {
+                path:'/protected',
+                element: <AuthenticationGuard component={Protected}/>
+            },
+            {
+                path:'/about',
+                element: <About/>
+            },
+            {
+                path:'/profile',
+                element: <AuthenticationGuard  component={Profile}/>
+            },
+            {
+                path: "/callback",
+                element: <AuthCallback/>
             }
         ]
     }

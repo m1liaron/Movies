@@ -6,7 +6,7 @@ import {
     createTheme
 } from "@mui/material";
 import {teal} from "@mui/material/colors"
-import {AppHeader} from "./AppHeader";
+import {AppHeader} from "./features/Header/AppHeader";
 import {anonymousUser, AuthContext, AuthInfo} from "./AuthContext";
 
 const defaultTheme = createTheme({
@@ -31,7 +31,7 @@ function App() {
     <ThemeProvider theme={defaultTheme}>
           <CssBaseline/>
           <AuthContext.Provider value={auth}>
-              <AppHeader onLogin={() => setAuth(fakeAuth)} onLogout={() => setAuth({user: anonymousUser})}/>
+              <AppHeader/>
               <main>
                 <Outlet/>
               </main>

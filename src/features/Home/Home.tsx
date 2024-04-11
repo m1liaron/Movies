@@ -1,12 +1,9 @@
 import {Box, Typography, Container, Input, Button} from "@mui/material";
-import {Link as RouterLink} from 'react-router-dom'
-import {useContext} from "react";
-import {anonymousUser, AuthContext} from "../../AuthContext";
+import {useAuth0} from "@auth0/auth0-react";
 export function Home() {
-    const { user} = useContext(AuthContext)
-    const loggedIn = user !== anonymousUser
-    const greeting = loggedIn
-    ? `${user.name} Explore movies today with us!`
+    const { user, isAuthenticated} = useAuth0()
+    const greeting = isAuthenticated
+    ? `${user?.name} Explore movies today with us!`
     : 'Explore movies today with us!'
 
     // throw new Error('Fatality!') check Error Boundary work
@@ -31,21 +28,6 @@ export function Home() {
                 >
                     {greeting}
                 </Typography>
-
-                {/*<Typography*/}
-                {/*    component="h4"*/}
-                {/*    variant='h5'*/}
-                {/*    color="text.primary"*/}
-                {/*    gutterBottom*/}
-                {/*>*/}
-                {/*    Search for your favorite movis*/}
-                {/*</Typography>*/}
-                {/*<Button*/}
-                {/*    component={RouterLink}*/}
-                {/*    to='/movies'*/}
-                {/*    variant="contained"*/}
-                {/*>Explore</Button>*/}
-                {/*<Input type='text'/>*/}
             </Container>
 
         </Box>
