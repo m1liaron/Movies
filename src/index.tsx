@@ -15,6 +15,7 @@ import store from "./store";
 import {Movie} from "./features/Movie/Movie";
 import {ErrorBoundary} from "./ErrorBoundary";
 import {LinearProgress} from "@mui/material";
+import {Extra} from "./features/Extra/Extra";
 
 const Movies = lazy(() => import("./features/Movies/Movies"));
 
@@ -43,13 +44,20 @@ const router = createBrowserRouter([
             },
             {
                 path:'movies',
-                element: <Suspense fallback={<LinearProgress sx={{mt: 1}}/>}><Movies/></Suspense>,
+                element:
+                    <Suspense fallback={<LinearProgress sx={{mt: 1}}/>}>
+                        <Movies/>
+                    </Suspense>,
                 children:[
                     {
                         path:':id',
                         element:<Movie/>
                     }
                 ]
+            },
+            {
+                path: "extra",
+                element: <Extra/>
             }
         ]
     }
