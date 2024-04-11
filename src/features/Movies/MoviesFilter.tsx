@@ -7,13 +7,13 @@ import {
     debounce,
     FormLabel,
     FormControlLabel,
-    Checkbox
+    Checkbox, Skeleton, FormGroup
 } from "@mui/material";
 import {Controller, useForm} from "react-hook-form";
 import {FilterAltOutlined} from "@mui/icons-material";
-import {client, KeyWordItem} from "../../api/tmdb";
+import {KeyWordItem} from "../../services/tmdb";
 import {useMemo, useState} from "react";
-import {useAppSelector} from "../../hooks";
+import {useGetGenresQuery, useGetKeyWordsQuery} from "../../services/tmdb";
 
 export interface Filters {
     keywords: KeyWordItem[];
@@ -24,9 +24,11 @@ interface MoviesFilterProps{
 }
 
 export default function MoviesFilter({onApply} : MoviesFilterProps) {
-    const [keywordsLoading, setKeywordsLoading] = useState(false)
-    const [keywordsOptions,setKeywordsOptions] = useState<KeyWordItem[]>([]);
-    const genres = useAppSelector((state) => state.movies.genres)
+    const [keywordsQuery, setKeywordsQuery] = useState<string>("")
+    const { data: keywordsOptions = [], isLoading: keywordsLoading } =  useGetKeyWordsQuery(keywordsQuery)
+    useGetKeyWordsQuery(keywordsQuery, { skip: !keywordsQuery }); // skip request to API
+
+    const { data: genres = [], isLoading: genresLoading} = useGetGenresQuery();
 
     const {handleSubmit, control} = useForm<Filters>({
         defaultValues:{
@@ -35,19 +37,9 @@ export default function MoviesFilter({onApply} : MoviesFilterProps) {
         },
     });
 
-    const fetchKeywordOptions = async (query: string) => {
-        if (query) {
-            setKeywordsLoading(true)
-
-            const options = await client.getKeyWords(query);
-            setKeywordsLoading(false)
-            setKeywordsOptions(options);
-        } else {
-            setKeywordsOptions([]);
-        }
-    }
-
-    const debouncedFetchKeywordOptions = useMemo(() => debounce(fetchKeywordOptions, 1000),[]);
+    const debouncedFetchKeywordOptions = useMemo(() => debounce((query: string) => {
+        setKeywordsQuery(query)
+    }, 1000),[]);
 
     return (
         <Paper sx={{ m: 2, p:0.5}}>
@@ -81,34 +73,41 @@ export default function MoviesFilter({onApply} : MoviesFilterProps) {
                     variant="standard"
                     sx={{m: 2, display: "block"}}
                 >
-                    <FormLabel component="legend">Genres</FormLabel>
-                    <Controller
-                        name="genres"
-                        control={control}
-                        render={({ field }) => (
-                            <>
-                                {genres.map((genre) => (
-                                    <FormControlLabel
-                                        key={genre.id}
-                                        control={
-                                            <Checkbox
-                                                value={genre.id}
-                                                checked={field.value.includes(genre.id)}
-                                                onChange={(event, checked) => {
-                                                    const valueNumber = Number(event.target.value);
-                                                    if (checked) {
-                                                        field.onChange([...field.value, valueNumber]);
-                                                    } else {
-                                                        field.onChange(field.value.filter((value) => value !== valueNumber));
-                                                    }
-                                                }}
+                    {genresLoading ? (
+                        <Skeleton width={300} height={480}/>
+                    ) : (
+                        <>
+                        <FormLabel component="legend">Genres</FormLabel>
+                        <FormGroup sx={{ maxHeight: 500 }}>
+                            <Controller
+                                name="genres"
+                                control={control}
+                                render={({field}) => (
+                                    <>
+                                        {genres.map((genre) => (
+                                            <FormControlLabel
+                                                key={genre.id}
+                                                control={
+                                                    <Checkbox
+                                                        value={genre.id}
+                                                        checked={field.value.includes(genre.id)}
+                                                        onChange={(event, checked) => {
+                                                            const valueNumber = Number(event.target.value);
+                                                            if (checked) {
+                                                                field.onChange([...field.value, valueNumber]);
+                                                            } else {
+                                                                field.onChange(field.value.filter((value) => value !== valueNumber));
+                                                            }
+                                                        }}
+                                                    />
+                                                }
+                                                label={genre.name}
                                             />
-                                        }
-                                        label={genre.name}
-                                    />
-                                ))}
-                            </>
-                        )}/>
+                                        ))}
+                                    </>
+                                )}/>
+                        </FormGroup>
+                    </>)}
                 </FormControl>
                 <Button type="submit" variant="contained" startIcon={<FilterAltOutlined/>} sx={{m:2}}>
                     Apply filter
