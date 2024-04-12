@@ -24,6 +24,7 @@
     "leaflet": "^1.9.4",
     "localforage": "^1.10.0",
     "match-sorter": "^6.3.4",
+    "msw": "^2.2.13",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.2",
@@ -60,7 +61,15 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/leaflet": "^1.9.9",
-    "sass": "^1.74.1"
+    "msw": "^2.0.14",
+    "sass": "^1.74.1",
+    "undici": "^5.28.2"
+  },
+  "jest": {
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@bundled-es-modules)/)"
+    ]
   }
 }
