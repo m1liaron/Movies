@@ -28,7 +28,6 @@ function MovieCard({
    onAddFavorite,
   image = '/thumbnail.png'
 }: MovieCardProps){
-    console.count('MovieCard');
 
     return (
         <Card sx={{height: "100%", display:'flex', flexDirection: 'column'}}>

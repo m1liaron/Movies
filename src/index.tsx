@@ -51,12 +51,12 @@ const router = createBrowserRouter([
                     <Suspense fallback={<LinearProgress sx={{mt: 1}}/>}>
                         <Movies/>
                     </Suspense>,
-                // children:[
-                //     {
-                //         path:':id',
-                //         element:<Movie/>
-                //     }
-                // ]
+                children:[
+                    {
+                        path:':id',
+                        element:<Movie/>
+                    }
+                ]
             },
             {
                 path: "extra",

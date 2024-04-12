@@ -103,6 +103,11 @@ export const tmdbApi = createApi({
                 return currentArg !== previousArg
             }
         }),
+        // getMovie: builder.query<MovieDetails, MoviesQuery>({
+        //     query(moviesQuery) {
+        //
+        //     }
+        // }),
         getKeyWords: builder.query<KeyWordItem[], string>({
             query: (queryText) => `/search/keyword?query=${queryText}`,
             transformResponse: (response: PageResponse<KeyWordItem>) => response.results,
