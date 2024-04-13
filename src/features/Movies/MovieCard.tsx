@@ -25,7 +25,7 @@ function MovieCard({
   overview,
   popularity,
   enableUserActions,
-   onAddFavorite,
+  onAddFavorite,
   image = '/thumbnail.png'
 }: MovieCardProps){
 

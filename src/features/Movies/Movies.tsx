@@ -1,7 +1,6 @@
 import {lazy, Suspense, useCallback, useContext, useEffect, useState} from "react";
 import MovieCard from "./MovieCard";
 import {Container, Grid, LinearProgress, Typography} from "@mui/material";
-import {anonymousUser, AuthContext} from "../../AuthContext";
 import {useIntersectionObserver} from "../../hooks/useIntersectionObserver";
 import{
     MoviesFilters,

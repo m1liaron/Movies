@@ -8,11 +8,15 @@ interface Configuration{
 }
 
 interface MovieDetails {
-    id: number;
-    title: string;
-    popularity: number;
-    overview: string;
     backdrop_path?: string;
+    homepage: string;
+    id: number;
+    overview: string;
+    popularity: number;
+    poster_path?: string;
+    title: string;
+    genres: Genre[];
+    release_date: string;
 }
 
 interface MoviesState {
@@ -103,11 +107,6 @@ export const tmdbApi = createApi({
                 return currentArg !== previousArg
             }
         }),
-        // getMovie: builder.query<MovieDetails, MoviesQuery>({
-        //     query(moviesQuery) {
-        //
-        //     }
-        // }),
         getKeyWords: builder.query<KeyWordItem[], string>({
             query: (queryText) => `/search/keyword?query=${queryText}`,
             transformResponse: (response: PageResponse<KeyWordItem>) => response.results,
@@ -115,6 +114,9 @@ export const tmdbApi = createApi({
         getGenres: builder.query<Genre[], void>({
             query: () => "/genre/movie/list",
             transformResponse: (response: { genres: Genre[] }) => response.genres
+        }),
+        getMovie: builder.query<MovieDetails, number>({ // number is movieId
+            query: (movieId) => `/movie/${movieId}`,
         })
     })
 });
@@ -123,5 +125,6 @@ export const {
     useGetConfigurationQuery,
     useGetGenresQuery,
     useGetKeyWordsQuery,
-    useGetMoviesQuery
+    useGetMoviesQuery,
+    useGetMovieQuery
 } = tmdbApi

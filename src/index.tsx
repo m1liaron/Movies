@@ -46,17 +46,19 @@ const router = createBrowserRouter([
                 element: <Home/>
             },
             {
+                path:'/about',
+                element: <About/>
+            },
+            {
                 path:'movies',
                 element:
-                    <Suspense fallback={<LinearProgress sx={{mt: 1}}/>}>
-                        <Movies/>
-                    </Suspense>,
-                children:[
-                    {
-                        path:':id',
-                        element:<Movie/>
-                    }
-                ]
+                <Suspense fallback={<LinearProgress sx={{mt: 1}}/>}>
+                    <Movies/>
+                </Suspense>,
+            },
+            {
+                path:'/movies/:id',
+                element: <Movie/>
             },
             {
                 path: "extra",
@@ -65,10 +67,6 @@ const router = createBrowserRouter([
             {
                 path:'/protected',
                 element: <AuthenticationGuard component={Protected}/>
-            },
-            {
-                path:'/about',
-                element: <About/>
             },
             {
                 path:'/profile',
