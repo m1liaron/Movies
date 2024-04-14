@@ -3,17 +3,16 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 
-import React, {lazy, Suspense} from 'react';
+import React, {lazy, Profiler, Suspense} from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {createBrowserRouter, RouterProvider} from "react-router-dom";
 import {About} from "./features/About/About";
-import {Home} from "./features/Home/Home";
+import Home from "./features/Home/Home";
 import {Provider} from "react-redux";
 import store from "./store";
 import {Movie} from "./features/Movie/Movie";
-import {ErrorBoundary} from "./ErrorBoundary";
 import {LinearProgress} from "@mui/material";
 import {Extra} from "./features/Extra/Extra";
 import {StatefulAuthProvider} from "./auth/StatefulAuthProvider";
@@ -21,15 +20,31 @@ import {AuthCallback} from "./auth/AuthCallback";
 import {Profile} from "./features/Profile/Profile";
 import {AuthenticationGuard} from "./auth/AuthenticationGuard";
 import {Protected} from "./features/Protected/Protected";
+import {ErrorBoundary} from "react-error-boundary";
+import fallbackRender from "./fallbackRender";
 
 const Movies = lazy(() => import("./features/Movies/Movies"));
+
+type OnRenderFunction = (
+    id: string,
+    phase: string,
+    actualDuration: number,
+    baseDuration: number,
+    startTime: number,
+    commitTime: number
+) => void;
+
+const onRender: OnRenderFunction = (id, phase, actualDuration, baseDuration, startTime, commitTime) => {
+    // Aggregate or log render timings...
+    // console.log(id, phase, actualDuration, baseDuration, startTime, commitTime)
+}
 
 function AppEntryPoint(){
     return (
         <StatefulAuthProvider>
             <Provider store={store}>
-                <ErrorBoundary>
-                    <App/>
+                <ErrorBoundary fallbackRender={fallbackRender}>
+                        <App/>
                 </ErrorBoundary>
             </Provider>
         </StatefulAuthProvider>
@@ -47,7 +62,10 @@ const router = createBrowserRouter([
             },
             {
                 path:'/about',
-                element: <About/>
+                element:
+                    <Profiler id="About" onRender={onRender}>
+                        <About/>
+                    </Profiler>
             },
             {
                 path:'movies',

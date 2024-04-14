@@ -1,4 +1,4 @@
-import {createApi, EndpointBuilder, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
+import {createApi, fetchBaseQuery} from "@reduxjs/toolkit/query/react";
 import configuration from "../configuration";
 
 interface Configuration{
@@ -17,6 +17,20 @@ interface MovieDetails {
     title: string;
     genres: Genre[];
     release_date: string;
+    production_companies: Company[];
+    production_countries: Country[];
+}
+
+export interface Company {
+    id: number;
+    name:string;
+    logo_path:string;
+    origin_country: string;
+}
+
+interface Country {
+    iso_3166_1: string
+    name: string
 }
 
 interface MoviesState {
@@ -27,7 +41,10 @@ interface MoviesState {
 
 export interface MoviesFilters {
     keywords?: number[];
-    genres?: number[]
+    genres?: number[];
+    year?: number[];
+    country?: string;
+    companies?:number[];
 }
 
 export interface MoviesQuery {
@@ -78,6 +95,11 @@ export const tmdbApi = createApi({
                     params.append("with_genres", moviesQuery.filters.genres.join(","));
                 }
 
+                console.log(moviesQuery.filters)
+                if(moviesQuery.filters.companies?.length){
+                    params.append("with_companies", moviesQuery.filters.companies.join(","));
+                }
+
                 const query = params.toString();
                 const path = `/discover/movie?${query}`;
 
@@ -115,8 +137,15 @@ export const tmdbApi = createApi({
             query: () => "/genre/movie/list",
             transformResponse: (response: { genres: Genre[] }) => response.genres
         }),
+        getCompanies: builder.query<Company[], string>({
+            query:(companies) => `/search/company?query=${companies}`,
+            transformResponse: (response: PageResponse<Company>) => response.results,
+        }),
         getMovie: builder.query<MovieDetails, number>({ // number is movieId
             query: (movieId) => `/movie/${movieId}`,
+        }),
+        addFavorite: builder.mutation<MovieDetails, number>({
+            query: (movieId) => `/account/20362953/favorite?session_id=`
         })
     })
 });
@@ -126,5 +155,6 @@ export const {
     useGetGenresQuery,
     useGetKeyWordsQuery,
     useGetMoviesQuery,
-    useGetMovieQuery
+    useGetMovieQuery,
+    useGetCompaniesQuery
 } = tmdbApi

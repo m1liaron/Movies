@@ -34,7 +34,6 @@ function MovieCard({
             <CardMedia component="div" image={image} sx={{pt: "56.25%"}}/>
             <CardContent sx={{flexGrow: 1}}>
                 <Typography variant="h5" gutterBottom>
-                    {/*<Link to={`/movies/${id}`}>{title}</Link>*/}
                     {title}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">{overview}</Typography>

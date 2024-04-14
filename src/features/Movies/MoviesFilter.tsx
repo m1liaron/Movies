@@ -7,17 +7,23 @@ import {
     debounce,
     FormLabel,
     FormControlLabel,
-    Checkbox, Skeleton, FormGroup
+    Checkbox, Skeleton, FormGroup, Input
 } from "@mui/material";
 import {Controller, useForm} from "react-hook-form";
 import {FilterAltOutlined} from "@mui/icons-material";
-import {KeyWordItem} from "../../services/tmdb";
+import {
+    Company,
+    KeyWordItem,
+    useGetCompaniesQuery,
+    useGetGenresQuery,
+    useGetKeyWordsQuery
+} from "../../services/tmdb";
 import {useMemo, useState} from "react";
-import {useGetGenresQuery, useGetKeyWordsQuery} from "../../services/tmdb";
 
 export interface Filters {
     keywords: KeyWordItem[];
-    genres: number[]
+    genres: number[];
+    companies: Company[];
 }
 interface MoviesFilterProps{
     onApply(filters: Filters): void
@@ -28,17 +34,25 @@ export default function MoviesFilter({onApply} : MoviesFilterProps) {
     const { data: keywordsOptions = [], isLoading: keywordsLoading } =  useGetKeyWordsQuery(keywordsQuery)
     useGetKeyWordsQuery(keywordsQuery, { skip: !keywordsQuery }); // skip request to API
 
+    const [companiesQuery, setCompaniesQuery] = useState<string>("");
+    const {data: companiesOptions = [], isLoading: companiesLoading} = useGetCompaniesQuery(companiesQuery)
+
     const { data: genres = [], isLoading: genresLoading} = useGetGenresQuery();
 
     const {handleSubmit, control} = useForm<Filters>({
         defaultValues:{
             keywords:[],
             genres: [],
+            companies: [],
         },
     });
 
     const debouncedFetchKeywordOptions = useMemo(() => debounce((query: string) => {
         setKeywordsQuery(query)
+    }, 1000),[]);
+
+    const debouncedFetchCompanyOptions = useMemo(() => debounce((query: string) => {
+        setCompaniesQuery(query)
     }, 1000),[]);
 
     return (
@@ -108,6 +122,32 @@ export default function MoviesFilter({onApply} : MoviesFilterProps) {
                                 )}/>
                         </FormGroup>
                     </>)}
+                </FormControl>
+
+                <FormControl
+                    component="fieldset"
+                    variant="standard"
+                    sx={{m: 2, display: "block"}}
+                >
+                    <FormLabel component="legend">Company</FormLabel>
+                    <Controller
+                        name="companies"
+                        control={control}
+                        render={({ field: { onChange, value } }) => (
+                            <Autocomplete
+                                multiple
+                                loading={companiesLoading}
+                                disablePortal
+                                options={companiesOptions}
+                                filterOptions={(x) => x}
+                                getOptionLabel={(option) => option.name}
+                                onChange={(_, value) => onChange(value)}
+                                value={value}
+                                isOptionEqualToValue={(option, value) => option.id === value.id}
+                                onInputChange={(_, value) => debouncedFetchCompanyOptions(value)}
+                                renderInput={(params) => <TextField {...params} label="Companies" />}
+                            />
+                        )}/>
                 </FormControl>
                 <Button type="submit" variant="contained" startIcon={<FilterAltOutlined/>} sx={{m:2}}>
                     Apply filter

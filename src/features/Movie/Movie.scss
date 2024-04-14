@@ -1,0 +1,16 @@
+/* Media query for screens with a maximum width of 600px */
+@media (max-width: 600px) {
+  .MuiContainer-root {
+    flex-wrap: wrap;
+  }
+
+  .MuiCardMedia-root {
+    width:80% !important;
+    height: auto !important;
+    margin-right: 0 !important;
+  }
+
+  .MuiCardMedia-root {
+
+  }
+}

@@ -2,7 +2,8 @@ import {CardMedia, Container, LinearProgress, Typography, Link, List, ListItem} 
 import {useParams} from "react-router-dom";
 import {useGetConfigurationQuery, useGetMovieQuery} from "../../services/tmdb";
 import {Link as RouterLink} from 'react-router-dom'
-import {ArrowBack} from "@mui/icons-material";
+import {ArrowBack, Description} from "@mui/icons-material";
+import "./Movie.scss"
 
 export function Movie() {
     const { id }= useParams();
@@ -31,7 +32,7 @@ export function Movie() {
                         alt={movie.title}
                         sx={{width:'50%', height: 500, mr:10}}
                     />
-                    <Container>
+                    <Container sx={{p:5}}>
                         <Link
                             component={RouterLink}
                             to={movie.homepage}
@@ -45,12 +46,31 @@ export function Movie() {
                         <Typography>{movie.release_date}</Typography>
                         <Container sx={{ display: 'flex', flexDirection: 'row', gap: '1px', mb:2}}>
                             {movie.genres.map(genre => (
-                                <ListItem key={genre.id}>
+                                <ListItem key={genre.id} sx={{border:'1px solid #000', width:'40%'}}>
                                     <Typography variant="body1">{genre.name}</Typography>
                                 </ListItem>
                             ))}
                         </Container>
                         <Typography variant="h2" sx={{ fontSize: 20 }}>{movie.overview}</Typography>
+                        <Container sx={{ display: 'flex', flexDirection: 'row', mb:2}}>
+                            <Typography>Companies: </Typography>
+                            {movie?.production_companies.map(company => (
+                                    <CardMedia
+                                        key={company.id}
+                                        component="img"
+                                        src={formatImageUrl(company.logo_path)}
+                                        alt={company.name}
+                                        sx={{width:'40%', height: '50%', mr:10}}
+                                    />
+                            ))}
+                        </Container>
+                        <Container>
+                            {movie?.production_countries.map((country, index) => (
+                                <Container key={index}>
+                                    <Typography>{country.iso_3166_1}: {country.name}</Typography>
+                                </Container>
+                            ))}
+                        </Container>
                     </Container>
                 </Container>
             )}

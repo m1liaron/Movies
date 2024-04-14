@@ -52,8 +52,8 @@ export default function Movies(){
                         const moviesFilters: MoviesFilters = {
                             keywords: filters.keywords.map(k => k.id),
                             genres: filters.genres,
+                            companies: filters.companies.map(k => k.id),
                         }
-
 
                         setQuery({
                             page: 1,

@@ -1,35 +1,45 @@
-import {Box, Typography, Container, Input, Button} from "@mui/material";
-import {useAuth0} from "@auth0/auth0-react";
-export function Home() {
-    const { user, isAuthenticated} = useAuth0()
-    const greeting = isAuthenticated
-    ? `${user?.name} Explore movies today with us!`
-    : 'Explore movies today with us!'
+import { Box, Button, Container, Stack, Typography } from "@mui/material";
+import { Link as RouterLink } from "react-router-dom";
+import { useAuth0 } from "@auth0/auth0-react";
 
-    // throw new Error('Fatality!') check Error Boundary work
+function Copyright() {
+    return (
+        <Typography variant="body2" color="text.secondary" align="center">
+            Copyright © The Movies DB {new Date().getFullYear()}
+        </Typography>
+    );
+}
+
+export default function Home() {
+    const { isAuthenticated, user } = useAuth0();
+    const greeting = "Explore movies today with us!";
 
     return (
-        <Box sx={{pt: 8, pb:8}}>
-            <Container maxWidth='sm'>
-                <Typography
-                    component="h1"
-                    variant='h2'
-                    align="center"
-                    color="text.primary"
-                    gutterBottom
-                >
+        <Box sx={{ bgcolor: "background.paper", pt: 8, pb: 8 }}>
+            <Container maxWidth="sm">
+                <Typography component="h1" variant="h2" align="center" color="text.primary" gutterBottom>
                     Welcome
                 </Typography>
-                <Typography
-                    variant='h5'
-                    align="center"
-                    color="text.primary"
-                    gutterBottom
-                >
-                    {greeting}
+                <Typography variant="h5" align="center" color="text.secondary" paragraph>
+                    {isAuthenticated ? `${user?.name}, ${greeting.toLowerCase()}` : greeting}
                 </Typography>
+                <Stack sx={{ pt: 4 }} direction="row" spacing={2} justifyContent="center">
+                    <Button component={RouterLink} to="/movies" variant="contained" color="secondary">
+                        Explore
+                    </Button>
+                </Stack>
             </Container>
-
+            <Container
+                maxWidth="md"
+                component="footer"
+                sx={{
+                    borderTop: (theme) => `1px solid ${theme.palette.divider}`,
+                    mt: 8,
+                    py: [3, 6],
+                }}
+            >
+                <Copyright />
+            </Container>
         </Box>
-    )
+    );
 }
