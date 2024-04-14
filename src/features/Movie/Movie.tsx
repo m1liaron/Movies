@@ -1,6 +1,6 @@
 import {CardMedia, Container, LinearProgress, Typography, Link, List, ListItem} from "@mui/material";
 import {useParams} from "react-router-dom";
-import {useGetConfigurationQuery, useGetMovieQuery} from "../../services/tmdb";
+import {useGetCharactersQuery, useGetConfigurationQuery, useGetMovieQuery} from "../../services/tmdb";
 import {Link as RouterLink} from 'react-router-dom'
 import {ArrowBack, Description} from "@mui/icons-material";
 import "./Movie.scss"
@@ -9,11 +9,13 @@ export function Movie() {
     const { id }= useParams();
     const { data: configuration } = useGetConfigurationQuery()
     const { data: movie, isFetching } = useGetMovieQuery(Number(id));
+    const { data: characters, isFetching: charactersLoading} = useGetCharactersQuery(Number(id))
 
     function formatImageUrl(path?: string) {
         return path && configuration ? `${configuration?.images.base_url}w780${path}` : undefined
     }
 
+    console.log(characters?.cast)
     return (
         <Container sx={{m:0, p:0}}>
             <Link
@@ -74,6 +76,19 @@ export function Movie() {
                     </Container>
                 </Container>
             )}
+            <Link
+                to={'cast'}
+                component={RouterLink}
+                color="inherit"
+                variant="h3"
+            >
+                <Typography>Actors</Typography>
+            </Link>
+            {/*{characters?.cast.map(character => (*/}
+            {/*    <Container key={character.id}>*/}
+            {/*        <Typography>{character.name}</Typography>*/}
+            {/*    </Container>*/}
+            {/*))}*/}
             {isFetching && <LinearProgress color="secondary" sx={{ mt: 3 }} />}
         </Container>
     );

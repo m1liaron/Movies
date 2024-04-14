@@ -21,6 +21,26 @@ interface MovieDetails {
     production_countries: Country[];
 }
 
+interface CharacterDetails {
+    id:number;
+    known_for_department: string;
+    name:string;
+    profile_path:string;
+    character:string;
+}
+
+interface Crew {
+    id: number;
+    job: string;
+    name:string;
+    profile_path:string;
+}
+
+interface Characters {
+    cast: CharacterDetails[];
+    crew: Crew[]
+}
+
 export interface Company {
     id: number;
     name:string;
@@ -146,6 +166,9 @@ export const tmdbApi = createApi({
         }),
         addFavorite: builder.mutation<MovieDetails, number>({
             query: (movieId) => `/account/20362953/favorite?session_id=`
+        }),
+        getCharacters: builder.query<Characters, number>({
+            query:(movieId) => `movie/${movieId}/credits`
         })
     })
 });
@@ -156,5 +179,6 @@ export const {
     useGetKeyWordsQuery,
     useGetMoviesQuery,
     useGetMovieQuery,
-    useGetCompaniesQuery
+    useGetCompaniesQuery,
+    useGetCharactersQuery
 } = tmdbApi

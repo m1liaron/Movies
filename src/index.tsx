@@ -22,6 +22,7 @@ import {AuthenticationGuard} from "./auth/AuthenticationGuard";
 import {Protected} from "./features/Protected/Protected";
 import {ErrorBoundary} from "react-error-boundary";
 import fallbackRender from "./fallbackRender";
+import Actors from "./features/Actors/Actors";
 
 const Movies = lazy(() => import("./features/Movies/Movies"));
 
@@ -75,8 +76,12 @@ const router = createBrowserRouter([
                 </Suspense>,
             },
             {
-                path:'/movies/:id',
-                element: <Movie/>
+                path:'movies/:id',
+                element: <Movie/>,
+            },
+            {
+                path:'movies/:id/cast',
+                element: <Actors/>
             },
             {
                 path: "extra",
