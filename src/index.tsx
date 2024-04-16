@@ -23,6 +23,8 @@ import {Protected} from "./features/Protected/Protected";
 import {ErrorBoundary} from "react-error-boundary";
 import fallbackRender from "./fallbackRender";
 import Actors from "./features/Actors/Actors";
+import {Person} from "./features/Person/Person";
+import {StarWars} from "./features/StarWars/StarWars";
 
 const Movies = lazy(() => import("./features/Movies/Movies"));
 
@@ -86,6 +88,14 @@ const router = createBrowserRouter([
             {
                 path: "extra",
                 element: <Extra/>
+            },
+            {
+                path: "starwars",
+                element: <StarWars/>
+            },
+            {
+                path: "person/:id/:name",
+                element: <Person/>
             },
             {
                 path:'/protected',

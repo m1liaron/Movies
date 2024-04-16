@@ -14,19 +14,23 @@ Query і використати Add Favorite API_
 
 ~~Додати фільтр фільмів за компаніями, передаючи параметр with_companies (Discover Movie API).~~
 ~~Додати можливість шукати компанії за іменем (Company API). Використати RTK Query~~
-    
+
+## GraphQL
 Написати новий GraphQL запит в RTK Query, що повертає персонажа (character) по його id.
 Винести опис персонажа в фрагмент. Відобразити результат запиту на UI
 
-Додати окрему сторінку для відображення інформації про фільми Start Wars. Використати Star
-Wars GraphQL API. Для доступу до API використати Apollo Client.
+~~Додати окрему сторінку для відображення інформації про фільми Start Wars. Використати Star
+Wars GraphQL API. Для доступу до API використати Apollo Client.~~
 
+## Create new app
 Створити простий React проєкт без CSS та налаштувати в ньому Server-side Rendering за
 допомогою Server React DOM APIs та Express.js.
 
 Створити проєкт за допомогою Next.js App Router на довільну тематику. Використати Server та
 Client Components
 
+
+## Tests
 Написати тести для CountdownText компоненти, використовуючи Jest Timer Mocks та React
 Testing Library.
 

@@ -41,6 +41,22 @@ interface Characters {
     crew: Crew[]
 }
 
+interface Person{
+    name:string;
+    profile_path: string;
+    known_for: MovieDetails[];
+    known_for_department: string;
+    gender:number;
+}
+
+interface PersonDetails{
+    also_known_as: string[];
+    biography: string;
+    birthday:string;
+    deathday: number;
+    place_of_birth:string;
+}
+
 export interface Company {
     id: number;
     name:string;
@@ -169,6 +185,13 @@ export const tmdbApi = createApi({
         }),
         getCharacters: builder.query<Characters, number>({
             query:(movieId) => `movie/${movieId}/credits`
+        }),
+        getPerson: builder.query<Person[], string>({
+            query:(name) => `/search/person?query=${name}`,
+            transformResponse: (response: PageResponse<Person>) => response.results
+        }),
+        getPersonDetails: builder.query<PersonDetails, number>({
+            query:(personId) => `/person/${personId}`
         })
     })
 });
@@ -180,5 +203,7 @@ export const {
     useGetMoviesQuery,
     useGetMovieQuery,
     useGetCompaniesQuery,
-    useGetCharactersQuery
+    useGetCharactersQuery,
+    useGetPersonQuery,
+    useGetPersonDetailsQuery
 } = tmdbApi

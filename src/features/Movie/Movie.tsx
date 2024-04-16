@@ -1,4 +1,4 @@
-import {CardMedia, Container, LinearProgress, Typography, Link, List, ListItem} from "@mui/material";
+import {CardMedia, Container, LinearProgress, Typography, Link, List, ListItem, Card, Button} from "@mui/material";
 import {useParams} from "react-router-dom";
 import {useGetCharactersQuery, useGetConfigurationQuery, useGetMovieQuery} from "../../services/tmdb";
 import {Link as RouterLink} from 'react-router-dom'
@@ -15,7 +15,6 @@ export function Movie() {
         return path && configuration ? `${configuration?.images.base_url}w780${path}` : undefined
     }
 
-    console.log(characters?.cast)
     return (
         <Container sx={{m:0, p:0}}>
             <Link
@@ -27,7 +26,21 @@ export function Movie() {
                 <ArrowBack/>
             </Link>
             {movie && (
-                <Container sx={{display:'flex', justifyContent:'center'}}>
+                <Container
+                    sx={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        mb: 5,
+                        // backgroundImage: `url(${formatImageUrl(movie?.backdrop_path)})`, // Set background image
+                        backgroundSize: 'cover', // Ensure the image covers the container
+                        backgroundPosition: 'center', // Center the image within the container
+                    }}
+                >
+                    <CardMedia
+                        component="div"
+                        image={formatImageUrl(movie?.backdrop_path) || '/thumbnail.png'}
+                        sx={{pt: "56.25%"}}
+                    />
                     <CardMedia
                         component="img"
                         src={formatImageUrl(movie.poster_path)}
@@ -46,9 +59,9 @@ export function Movie() {
                             {movie.title}
                         </Link>
                         <Typography>{movie.release_date}</Typography>
-                        <Container sx={{ display: 'flex', flexDirection: 'row', gap: '1px', mb:2}}>
+                        <Container sx={{ display: 'flex', flexDirection: 'row', gap: '1px', mb:2, flexWrap:'nowrap'}}>
                             {movie.genres.map(genre => (
-                                <ListItem key={genre.id} sx={{border:'1px solid #000', width:'40%'}}>
+                                <ListItem key={genre.id} sx={{border:'1px solid #000'}}>
                                     <Typography variant="body1">{genre.name}</Typography>
                                 </ListItem>
                             ))}
@@ -76,19 +89,38 @@ export function Movie() {
                     </Container>
                 </Container>
             )}
-            <Link
-                to={'cast'}
-                component={RouterLink}
-                color="inherit"
-                variant="h3"
-            >
-                <Typography>Actors</Typography>
-            </Link>
-            {/*{characters?.cast.map(character => (*/}
-            {/*    <Container key={character.id}>*/}
-            {/*        <Typography>{character.name}</Typography>*/}
-            {/*    </Container>*/}
-            {/*))}*/}
+
+            <Container sx={{display:'flex',  justifyContent:'center', gap:2, flexWrap:'wrap', alignItems:'center'}}>
+            {characters?.cast.slice(0,6).map(character => (
+                <Link
+                    to={`/person/${character.id}/${character.name}`}
+                    component={RouterLink}
+                    color="inherit"
+                    variant="h3"
+                    key={character.id}
+                >
+                    <Card>
+                        <CardMedia
+                            component="img"
+                            src={formatImageUrl(character?.profile_path)}
+                            sx={{width:150, height:200}}
+                        />
+                        <Container sx={{p:0}}>
+                            <Typography sx={{fontWeight:'bold'}}>{character.name}</Typography>
+                            <Typography>{character.character}</Typography>
+                        </Container>
+                    </Card>
+                </Link>
+            ))}
+                <Link
+                    to={'cast'}
+                    component={RouterLink}
+                    color="inherit"
+                    variant="h3"
+                >
+                    <Button color="inherit">View more</Button>
+                </Link>
+            </Container>
             {isFetching && <LinearProgress color="secondary" sx={{ mt: 3 }} />}
         </Container>
     );
